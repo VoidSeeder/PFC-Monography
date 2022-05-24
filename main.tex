@@ -7,6 +7,24 @@
 
 \usepackage{changepage} %to use adjustwidth
 
+\usepackage{tocloft} %to use cfttoctitlefont
+
+\usepackage{indentfirst} %to indentation
+
+%summary configuration
+\renewcommand{\cfttoctitlefont}{\hfill\Large\bfseries}
+\renewcommand{\cftaftertoctitle}{\hfill\mbox{}}
+\renewcommand{\cftsecleader}{\cftdotfill{\cftdotsep}}
+
+%arial font
+\renewcommand{\familydefault}{\sfdefault}
+
+\setlength{\parindent}{1.5cm}
+
+\cftsetindents{section}{0em}{2.5em}
+\cftsetindents{subsection}{0em}{2.5em}
+\cftsetindents{subsubsection}{0em}{2.5em}
+
 \begin{document}
 
 \begin{titlepage}
@@ -44,5 +62,19 @@
         \textbf{2022}
     \end{center}
 \end{titlepage}
+
+\begin{center}
+    \tableofcontents
+\end{center}
+
+\newpage
+
+\section{INTRODUÇÃO}
+
+Os estudantes de engenharia são submetidos no clico básico ao estudo de matemática e física, de forma que possam compreender melhor as manipulações algébricas e numéricas quando iniciam os estudos específicos de engenharia. A vertente de fenômenos de transporte é carregada de aplicações matemáticas que podem prejudicar o entendimento e visualização para os alunos menos familiarizados.
+
+Ilustrações são recursos muito utilizados por educadores e autores de livros didáticos a fim de melhorar o entendimento dos estudantes. Entretanto as ilustrações são limitadas à mídia que pertencem (geralmente livros, revistas e artigos), não podendo ser interativas ou mutáveis.
+
+Neste projeto foi desenvolvida uma aplicação web com interface interativa, onde os estudantes e professores podem manipular os parâmetros e visualizar explicações pontuais sobre as aplicações matemáticas e físicas que envolvem alguns problemas de transferência de calor.
 
 \end{document}
