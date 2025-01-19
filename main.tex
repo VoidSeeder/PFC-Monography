@@ -11,6 +11,8 @@
 
 \usepackage{indentfirst} %to indentation
 
+\usepackage{minted}
+
 %summary configuration
 \renewcommand{\cfttoctitlefont}{\hfill\Large\bfseries}
 \renewcommand{\cftaftertoctitle}{\hfill\mbox{}}
@@ -41,7 +43,7 @@
         \vspace{0.3cm}
         FACULDADE DE ENGENHARIA MECÂNICA\\
         \vspace{0.3cm}
-        2022
+        2024
     \end{center}
 \end{titlepage}
 
@@ -59,7 +61,7 @@
         \end{adjustwidth}
         \vspace*{\fill}
         \textbf{UBERLÂNDIA - MG\\}
-        \textbf{2022}
+        \textbf{2024}
     \end{center}
 \end{titlepage}
 
@@ -76,5 +78,95 @@ Os estudantes de engenharia são submetidos no clico básico ao estudo de matem�
 Ilustrações são recursos muito utilizados por educadores e autores de livros didáticos a fim de melhorar o entendimento dos estudantes. Entretanto as ilustrações são limitadas à mídia que pertencem (geralmente livros, revistas e artigos), não podendo ser interativas ou mutáveis.
 
 Neste projeto foi desenvolvida uma aplicação web com interface interativa, onde os estudantes e professores podem manipular os parâmetros e visualizar explicações pontuais sobre as aplicações matemáticas e físicas que envolvem alguns problemas de transferência de calor.
+
+\section{Relatório}
+
+O objetivo da primeira etapa é entender como os processadores gráficos (GPU) podem ser usados para solução de problemas de CFD (computation fluid dynamics) e qual a melhor abordagem, equilibrando o trabalho necessário para escrever o código e eficiência do mesmo. Nessa etapa serão feitas pesquisas e testes no sentido de entender como o código é feito quando se programa para GPU em Python e C++.
+
+É esperado que GPU's tenham melhor desempenho em operações envolvendo matrizes em comparação com processadores lógicos (CPU's). Dessa forma, considerando que boa parte dos problemas de CFD resultam em muitos cálculos envolvendo matrizes, é esperado que o uso de GPU possa acelerar as soluções, que em determinadas condições envolvem muitas horas se utilizando os métodos usuais, como por exemplo o MatLab.
+
+\subsection{O hardware}
+
+O GPU utilizado é o modelo RTX 3070, da fabricante Nvidia, que através da plataforma CUDA (Compute Unified Device Architecture), possibilita a execução de códigos pelo método de computação paralela. Para este trabalho será usada a versão 12.7 do CUDA. Também é importante ressaltar que, conforme informações do fabricante, o chip RTX 3070 deve utilizar 8 gigabytes (Gb) de memória volátil.
+
+O restante do hardware é composto por um CPU modelo Ryzen 7 5700X de 8 núcleos físicos e 16 virtuais, operando em overclock a 4.75 Ghz e duas placas de memória volátil de 16 Gb operando a 3200 Mhz em dual channel.
+
+Nesse trabalho será referido como RAM e VRAM as memórias voláteis dedicadas ao CPU e ao GPU, respectivamente. Uma parcela de 16 Gb da memória RAM também pode ser usada pelo GPU, sendo essa parcela referida como memória compartilhada.
+
+\subsection{O código}
+
+Foi usado como ponto de partida um código em MatLab, desenvolvido para fins didáticos, quem tem como objetivo calcular e exibir de forma gráfica a distribuição de calor em um fluido que atravessa um canal circular.
+
+
+
+\subsection{Python}
+
+O código foi traduzido para Python com o objetivo de utilizar os recursos da linguagem e bibliotecas desenvolvidas pela comunidade.
+
+O primeiro passo foi instalar o Python na versão mais recente 3.10.12, que será usada para todos os testes desse trabalho. Serão usadas as bibliotecas \emph{numpy} e \emph{cupy} para operações feitas no CPU e no GPU, respectivamente.
+
+\subsubsection{Instalação}
+
+A instalação do Python e do seu gerenciador de bibliotecas no ambiente Debian pode ser feita através do gerenciador apt:
+
+\begin{minted}{bash}
+    sudo apt install python3 python3-pip
+\end{minted}
+
+Em seguida, pode ser instalado um pacote que auxilia na identificação de drivers CUDA:
+
+\begin{minted}{bash}
+    sudo apt install nvidia-cuda-toolkit
+\end{minted}
+
+Com isso, pode-se usar o comando a seguir para verificar qual versão do CUDA está presente no sistema:
+
+\begin{minted}{bash}
+    nvidia-smi
+\end{minted}
+
+Output:
+
+\begin{minted}[fontsize=\footnotesize]{bash}
++-----------------------------------------------------------------------------------------+
+| NVIDIA-SMI 565.51.01              Driver Version: 565.90         CUDA Version: 12.7     |
+|-----------------------------------------+------------------------+----------------------+
+| GPU  Name                 Persistence-M | Bus-Id          Disp.A | Volatile Uncorr. ECC |
+| Fan  Temp   Perf          Pwr:Usage/Cap |           Memory-Usage | GPU-Util  Compute M. |
+|                                         |                        |               MIG M. |
+|=========================================+========================+======================|
+|   0  NVIDIA GeForce RTX 3070        On  |   00000000:05:00.0  On |                  N/A |
+|  0%   45C    P8             19W /  176W |    1317MiB /   8192MiB |     16%      Default |
+|                                         |                        |                  N/A |
++-----------------------------------------+------------------------+----------------------+
+                                                                                         
++-----------------------------------------------------------------------------------------+
+| Processes:                                                                              |
+|  GPU   GI   CI        PID   Type   Process name                              GPU Memory |
+|        ID   ID                                                               Usage      |
+|=========================================================================================|
+|    0   N/A  N/A       461      G   /Xwayland                                   N/A      |
++-----------------------------------------------------------------------------------------+
+\end{minted}
+
+Dessa forma, identifica-se que a versão instalada do Nvidia CUDA é 12.7, portanto deve ser instalada a biblioteca cupy compatível através do gerenciador de bibliotecas do Python, juntamente com a biblioteca numpy que também será necessária nos testes:
+
+\begin{minted}{bash}
+    pip install numpy cupy-cuda127
+\end{minted}
+
+Por fim, o código a seguir pode ser usado para verificar se o cupy foi instalado e está funcionando corretamente no ambiente de desenvolvimento:
+
+\inputminted{python}{cfd_on_gpu/teste_cupy.py}
+
+Caso tudo esteja funcional, o output esperado se parece com o seguinte:
+
+\begin{minted}{bash}
+    Array criado com CuPy: [1 2 3 4 5]
+    Resultado da operação na GPU: [ 1  4  9 16 25]
+    Dispositivo ativo: <CUDA Device 0>
+\end{minted}
+
+A máquina em questão possui apenas um adaptador gráfico, portanto o dispositivo é identificado na primeira posição (zero).
 
 \end{document}

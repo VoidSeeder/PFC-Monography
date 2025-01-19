@@ -1,0 +1,3 @@
+[submodule "cfd_on_gpu"]
+	path = cfd_on_gpu
+	url = https://github.com/VoidSeeder/cfd_on_gpu.git

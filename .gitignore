@@ -1,3 +1,7 @@
-/main*
-!/main.tex
 .vscode
+*.aux
+*.log
+*.synctex.gz
+*.toc
+_minted*
+*.pdf
