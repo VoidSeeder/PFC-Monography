@@ -93,6 +93,12 @@ O restante do hardware é composto por um CPU modelo Ryzen 7 5700X de 8 núcleos
 
 Nesse trabalho será referido como RAM e VRAM as memórias voláteis dedicadas ao CPU e ao GPU, respectivamente. Uma parcela de 16 Gb da memória RAM também pode ser usada pelo GPU, sendo essa parcela referida como memória compartilhada.
 
+\subsection{Ambiente de execução}
+
+Neste trabalho o sistema operacional usado será o Ubuntu 24.04.2 através da virtualização \emph{Windows Subsystem for Linux} (WSL), sendo então o kernel base especificamente na versão \emph{5.15.167.4-microsoft-standard-WSL2}.
+
+Posteriormente, serão descritos todos os passos necessários para instalação dos drivers e programas para execução dos códigos em Pyhton e C++.
+
 \subsection{O código}
 
 Foi usado como ponto de partida um código em MatLab, desenvolvido para fins didáticos, quem tem como objetivo calcular e exibir de forma gráfica a distribuição de calor em um fluido que atravessa um canal circular.
@@ -107,11 +113,34 @@ O primeiro passo foi instalar o Python na versão mais recente 3.10.12, que ser�
 
 \subsubsection{Instalação}
 
-A instalação do Python e do seu gerenciador de bibliotecas no ambiente Debian pode ser feita através do gerenciador apt:
+O gerenciamento de pacotes de software e dependências nos sistemas de base Debian é feita nativamente através do \emph{Advanced Package Tool} (APT). Por se tratar de uma ferramenta nativa e altamente difundida pela comunidade, o APT será usado para gerenciar todos os pacotes nesse trabalho. Entretanto, qualquer outro gerenciador pode ser usado desde que respeitadas suas respectivas versões.
+
+Antes de efetivamente iniciar a instalação é recomendada a atualização dos pacotes e dependências já instalados, evitando problemas relacionados à códigos antigos e conflitos de dependências. A verificação é feita através do comando:
 
 \begin{minted}{bash}
-    sudo apt install python3 python3-pip
+    sudo apt update
 \end{minted}
+
+Caso o retorno indique que existem pacotes desatualizados o comando a seguir fará todas as atualizações necessária:
+
+\begin{minted}{bash}
+    sudo apt upgrade
+\end{minted}
+
+Por fim, é importante a execução dos dois comandos a seguir para fazer a limpeza de pacotes não mais necessários instalados e listados, respectivamente:
+
+\begin{minted}{bash}
+    sudo apt autoremove
+    sudo apt autoclean
+\end{minted}
+
+Agora o sistema está preparado para a instalação do Python e do seu gerenciador de bibliotecas:
+
+\begin{minted}{bash}
+    sudo apt install python3 python3-pip python-is-python3
+\end{minted}
+
+Nota: o pacote \emph{python-is-python3} é opcional, tendo como função apenas transformar os comando \emph{python} e \emph{pip} em \emph{python3} e \emph{pip3}, respectivamente. Dessa forma pode-se omitir o caractere ''3'' ao utilizar tais comandos.
 
 Em seguida, pode ser instalado um pacote que auxilia na identificação de drivers CUDA:
 
@@ -149,15 +178,61 @@ Output:
 +-----------------------------------------------------------------------------------------+
 \end{minted}
 
-Dessa forma, identifica-se que a versão instalada do Nvidia CUDA é 12.7, portanto deve ser instalada a biblioteca cupy compatível através do gerenciador de bibliotecas do Python, juntamente com a biblioteca numpy que também será necessária nos testes:
+Dessa forma, identifica-se que a versão instalada do Nvidia CUDA é 12.7, e portanto a versão que deve ser instalado do \emph{cupy} é \emph{cuda-12x}.
+
+Em sequência, deve ser criado um ambiente virtual para utilização:
 
 \begin{minted}{bash}
-    pip install numpy cupy-cuda127
+    python -m venv python-env
+\end{minted}
+
+Sendo \emph{python-env} o nome arbitrário para o ambiente.
+
+O comando fará com que seja criada uma pasta \emph{python-env} no local onde foi executado.
+
+Após criado, o ambiente virtual pode ser ativado a qualquer momento utilizando:
+
+\begin{minted}{bash}
+    source python-env/bin/activate
+\end{minted}
+
+A partir dos passos descritos acima o terminar deve explicitar que o ambiente virtual está ativo com o prefixo ''(python-env)'', da seguinte forma:
+
+\begin{minted}{bash}
+    (python-env) [usuário]@[computador]:[caminho atual]$
+\end{minted}
+
+Sendo [usuário] o nome do usuário em sessão no sistema, [computador] o nome do computador registrado, e [caminho atual] o caminho até a pasta atual.
+
+Nota: para desativar o ambiente virtual em execução pode ser usado o seguinte comando:
+
+\begin{minted}{bash}
+    deactivate
+\end{minted}
+
+Desativar o ambiente não fará com que ele seja excluído, portanto todos os pacotes e bibliotecas instalados anteriormente persistirão ao ativá-lo novamente.
+
+Caso seja necessário, o ambiente virtual pode ser removido apagando a pasta \emph{python-env} de forma recursiva:
+
+\begin{minted}{bash}
+    rm -rf python-env
+\end{minted}
+
+Com o ambiente virtual ativo, pode ser instalada a biblioteca cupy compatível através do gerenciador de bibliotecas do Python, juntamente com a biblioteca numpy que também será necessária nos testes:
+
+\begin{minted}{bash}
+    pip install numpy cupy-cuda12x
 \end{minted}
 
 Por fim, o código a seguir pode ser usado para verificar se o cupy foi instalado e está funcionando corretamente no ambiente de desenvolvimento:
 
 \inputminted{python}{cfd_on_gpu/teste_cupy.py}
+
+Considerando que o código foi escrito em um arquivo \emph{test\_cupy.py} a execução é feita através do comando a seguir:
+
+\begin{minted}{bash}
+    python ./test_cupy.py
+\end{minted}
 
 Caso tudo esteja funcional, o output esperado se parece com o seguinte:
 
