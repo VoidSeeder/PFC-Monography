@@ -244,4 +244,17 @@ Caso tudo esteja funcional, o output esperado se parece com o seguinte:
 
 A máquina em questão possui apenas um adaptador gráfico, portanto o dispositivo é identificado na primeira posição (zero).
 
+
+\subsubsection{Tradução do código}
+
+A princípio, a tradução do código de MatLab para Python foi feita por um modelo de inteligência artificial, resultando em um código que funcionava parcialmente. Ao longo dos testes o código foi sendo modificado a fim de gerar resultados mais próximos aos do MatLab.
+
+O código em Python que executa as operações ainda usando CPU encontra-se no estado a seguir:
+
+\inputminted{python}{cfd_on_gpu/aula15_exercicio_VolumesFinitos_Poiseuille_Flow_2D.py}
+
+Para execução usando GPU algumas mudanças foram necessárias:
+
+\inputminted{python}{cfd_on_gpu/aula15_exercicio_VolumesFinitos_Poiseuille_Flow_2D_GPU.py}
+
 \end{document}
