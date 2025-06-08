@@ -5,3 +5,6 @@
 *.toc
 _minted*
 *.pdf
+python-env
+cpu_times_*.txt
+gpu_times_*.txt

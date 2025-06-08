@@ -13,6 +13,14 @@
 
 \usepackage{minted}
 
+\usepackage{multirow}
+
+\usepackage{pgfplots}
+
+\pgfplotsset{compat=1.18}
+
+\usepackage{siunitx}
+
 %summary configuration
 \renewcommand{\cfttoctitlefont}{\hfill\Large\bfseries}
 \renewcommand{\cftaftertoctitle}{\hfill\mbox{}}
@@ -101,9 +109,7 @@ Posteriormente, serão descritos todos os passos necessários para instalação 
 
 \subsection{O código}
 
-Foi usado como ponto de partida um código em MatLab, desenvolvido para fins didáticos, quem tem como objetivo calcular e exibir de forma gráfica a distribuição de calor em um fluido que atravessa um canal circular.
-
-\inputminted{octave}{cfd_on_gpu/aula15_exercicio_VolumesFinitos_Poiseuille_Flow_2D.m}
+Foi usado como ponto de partida um código em MatLab (apêndice A), desenvolvido para fins didáticos, quem tem como objetivo calcular e exibir de forma gráfica a distribuição de calor em um fluido que atravessa um canal circular.
 
 \subsection{Python}
 
@@ -249,12 +255,177 @@ A máquina em questão possui apenas um adaptador gráfico, portanto o dispositi
 
 A princípio, a tradução do código de MatLab para Python foi feita por um modelo de inteligência artificial, resultando em um código que funcionava parcialmente. Ao longo dos testes o código foi sendo modificado a fim de gerar resultados mais próximos aos do MatLab.
 
-O código em Python que executa as operações ainda usando CPU encontra-se no estado a seguir:
+Os código em Python que executa as operações usando CPU e GPU podem ser consultados nos apêndices B e C.
+
+\subsubsection{Testes iniciais}
+
+No primeiro teste, com o número de volumes na direção y (nVolY) definido com 400, foi obtido um tempo de execução de 58,35 segundos usando CPU contra 5,72 segundos na GPU, evidenciando a agilidade extra do processador de vídeo em lidar com operações de matrizes.
+
+A seguir, pode-se criar uma função que, dado um valor de nVolY, retorna o tempo total de execução. Será feito isso tanto para o código em CPU (apêndice D) quanto GPU (apêndice E), e então será possível comparar graficamente o quão eficiente cada um dos métodos é na execução do script proposto.
+
+Para comparar os tempos de execução foi desenvolvida uma função (apêndice F) que executa 5 testes, variando o valor de nVolY para cada uma das funções e escrevendo os tempos de alocação e iteração em arquivos.
+
+Nas tabelas a seguir estão expostos os tempos totais (alocação + iteração) para o código executado em CPU e GPU, respectivamente:
+
+\begin{table}[!h]
+    \caption{Tempo de execução para cada valor de nVolY em CPU}
+    \label{tab:cpu-times-table}
+    \vspace{0.5cm}
+    \hspace{-2cm}\begin{tabular}{c|c|c|c|c|c|c|c}
+        \multirow{2}{*}{nVolY} & \multicolumn{5}{c}{Tempo de execução (s)} & \multirow{2}{*}{Média} & \multirow{2}{*}{Desvio padrão} \\
+            & Teste 1    & Teste 2    & Teste 3    & Teste 4    & Teste 5    &            &          \\
+        50  & 0,827760   & 0,328056   & 0,300077   & 0,290090   & 0,292328   & 0,407662   & 0,235329 \\
+        100 & 2,523969   & 2,501784   & 2,707829   & 3,625440   & 2,731451   & 2,818095   & 0,463151 \\
+        150 & 8,148529   & 8,072223   & 7,874580   & 8,005467   & 9,167664   & 8,253693   & 0,520739 \\
+        200 & 14,843985  & 14,669079  & 13,765631  & 13,835930  & 13,670256  & 14,156976  & 0,553929 \\
+        250 & 21,429319  & 21,560324  & 22,564349  & 22,616004  & 22,460307  & 22,126061  & 0,580812 \\
+        300 & 30,952905  & 31,095024  & 31,029816  & 30,807639  & 31,106310  & 30,998339  & 0,122910 \\
+        350 & 41,511328  & 40,932770  & 40,918090  & 41,354543  & 41,058982  & 41,155143  & 0,265292 \\
+        400 & 53,453211  & 54,332191  & 54,301608  & 53,609549  & 54,510705  & 54,041453  & 0,475651 \\
+        450 & 67,794778  & 68,461572  & 67,716723  & 68,897778  & 68,900020  & 68,354174  & 0,575381 \\
+        500 & 83,397922  & 83,206904  & 82,235203  & 84,060163  & 83,316285  & 83,243295  & 0,654615 \\
+        550 & 102,563297 & 102,666959 & 108,051725 & 107,913193 & 106,444617 & 105,527958 & 2,732835 \\
+        600 & 125,317569 & 125,022033 & 125,394101 & 123,311940 & 125,088841 & 124,826897 & 0,860852
+    \end{tabular}
+\end{table}
+
+\begin{table}[]
+    \caption{Tempo de execução para cada valor de nVolY em GPU}
+    \label{tab:gpu-times-table}
+    \vspace{0.5cm}
+    \hspace{-1.25cm}\begin{tabular}{c|c|c|c|c|c|c|c}
+        \multirow{2}{*}{nVolY} & \multicolumn{5}{c}{Tempo de execução (s)} & \multirow{2}{*}{Média} & \multirow{2}{*}{Desvio padrão} \\
+            & Teste 1   & Teste 2   & Teste 3   & Teste 4   & Teste 5   &           &          \\
+        50  & 0,490006  & 0,331601  & 0,491780  & 0,375072  & 0,199480  & 0,377588  & 0,121985 \\
+        100 & 0,281556  & 0,280670  & 0,283004  & 0,350645  & 0,376177  & 0,314410  & 0,045641 \\
+        150 & 0,531931  & 0,508864  & 1,508941  & 0,503857  & 0,498311  & 0,710381  & 0,446592 \\
+        200 & 0,837360  & 0,865245  & 0,862136  & 0,821991  & 0,845416  & 0,846430  & 0,017897 \\
+        250 & 1,253516  & 1,290630  & 1,304347  & 1,255839  & 1,280070  & 1,276880  & 0,022036 \\
+        300 & 1,733097  & 1,797690  & 1,794362  & 1,754430  & 1,743906  & 1,764697  & 0,029601 \\
+        350 & 2,334094  & 2,396163  & 2,354561  & 3,415496  & 2,470414  & 2,594146  & 0,462101 \\
+        400 & 3,031880  & 3,118238  & 3,015091  & 3,117086  & 3,133413  & 3,083142  & 0,055158 \\
+        450 & 6,829434  & 7,226090  & 6,012057  & 7,078231  & 7,108072  & 6,850777  & 0,490587 \\
+        500 & 48,918336 & 43,488760 & 40,294673 & 42,226305 & 43,258711 & 43,637357 & 3,210093 \\
+        550 & 73,000980 & 75,620902 & 74,448216 & 75,327260 & 75,167063 & 74,712884 & 1,049869 \\
+        600 & 96,896951 & 96,320385 & 95,345571 & 96,579065 & 96,495460 & 96,327486 & 0,587368
+    \end{tabular}
+\end{table}
+
+\newpage
+
+Usando os dados coletados foi possível construir o gráfico de comparação:
+
+\begin{figure}[!h]
+    \centering
+    \begin{tikzpicture}
+        \begin{axis}[
+            width=14cm,
+            height=9cm,
+            grid=major,
+            xlabel={nVolY},
+            ylabel={Tempo médio de execução (s)},
+            xmin=0, xmax=650,
+            ymin=0, ymax=140,
+            xtick={0,50,...,600},
+            ytick={0,20,...,140},
+            legend pos=north west,
+            title={Comparação de tempo médio: CPU vs GPU},
+        ]
+
+        % --- CPU ---
+        \addplot+[
+            color=red,
+            mark=*,
+            mark options={fill=red},
+        ]
+        coordinates {
+            (50,0.407662)
+            (100,2.818095)
+            (150,8.253693)
+            (200,14.156976)
+            (250,22.126061)
+            (300,30.998339)
+            (350,41.155143)
+            (400,54.041453)
+            (450,68.354174)
+            (500,83.243295)
+            (550,105.527958)
+            (600,124.826897)
+        };
+        \addlegendentry{CPU}
+
+        % --- GPU ---
+        \addplot+[
+            color=blue,
+            mark=*,
+            mark options={fill=blue},
+        ]
+        coordinates {
+            (50,0.377588)
+            (100,0.314410)
+            (150,0.710381)
+            (200,0.846430)
+            (250,1.276880)
+            (300,1.764697)
+            (350,2.594146)
+            (400,3.083142)
+            (450,6.850777)
+            (500,43.637357)
+            (550,74.712884)
+            (600,96.327486)
+        };
+        \addlegendentry{GPU}
+
+        \end{axis}
+    \end{tikzpicture}
+    \caption{Comparação do tempo médio de execução entre CPU e GPU}
+    \label{fig:comparacao-cpu-gpu}
+\end{figure}
+
+\subsubsection{Análise dos resultados}
+
+Nota-se através do gráfico que a GPU é mais rápida na execução das operações, entretanto fica claro que para valores do nVolY acima de 400 o tempo de execução aumenta mais do que o esperado. Isso acontece porque, o refinamento da malha aumenta o uso de memória volátil. Para valores acima de 400, a memória de 8 Gb dedicada à GPU não é suficiente para armazenar todas as matrizes e vetores usados nas operações, obrigando o sistema a usar a memória compartilhada, sendo essa parte da memória RAM do sistema.
+
+O acesso do chip gráfico à memória compartilhada é feito através do barramento PCIe 4.0, que por sua vez é muito mais lento que o acesso direto através do memory bus (ou system bus), aumentando muito o tempo de execução quando é necessário o uso da memória compartilhada.
+
+Mesmo no cenário que foi descrito acima, a GPU ainda atingiu tempos de execução menores que a CPU para todos os valores de nVolY testados, mostrando que é conveniente o uso de GPU para operações com matrizes.
+
+\newpage
+
+\appendix
+
+\section{Código em MatLab}
+
+\inputminted{octave}{cfd_on_gpu/aula15_exercicio_VolumesFinitos_Poiseuille_Flow_2D.m}
+
+\newpage
+
+\section{Código para CPU}
 
 \inputminted{python}{cfd_on_gpu/aula15_exercicio_VolumesFinitos_Poiseuille_Flow_2D.py}
 
-Para execução usando GPU algumas mudanças foram necessárias:
+\newpage
+
+\section{Código para GPU}
 
 \inputminted{python}{cfd_on_gpu/aula15_exercicio_VolumesFinitos_Poiseuille_Flow_2D_GPU.py}
+
+\newpage
+
+\section{Função que retorna o tempo de execução em CPU}
+
+\inputminted{python}{cfd_on_gpu/compare/cpu.py}
+
+\newpage
+
+\section{Função que retorna o tempo de execução em GPU}
+
+\inputminted{python}{cfd_on_gpu/compare/gpu.py}
+
+\newpage
+
+\section{Função de comparação dos tempos de execução}
+
+\inputminted{python}{cfd_on_gpu/compare/app.py}
 
 \end{document}
