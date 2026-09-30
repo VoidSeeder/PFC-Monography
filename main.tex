@@ -1,123 +1,190 @@
-\documentclass[12pt,a4paper]{article}
+\documentclass[
+    12pt,
+    openright,
+    oneside,
+    a4paper,
+    english,
+    brazil,
+]{abntex2}
+
+\usepackage[T1]{fontenc}
 \usepackage[utf8]{inputenc}
-\usepackage[brazilian]{babel}
-\usepackage[left=3cm,top=3cm,right=2cm,bottom=2cm]{geometry}
-
-\usepackage{graphicx} %to use includegraphics
-
-\usepackage{changepage} %to use adjustwidth
-
-\usepackage{tocloft} %to use cfttoctitlefont
-
-\usepackage{indentfirst} %to indentation
+\usepackage{indentfirst}
+\usepackage{graphicx}
+\usepackage{microtype}
 
 \usepackage{minted}
-
+\setminted{breaklines=true, breakanywhere=true} % quebra linhas longas
 \usepackage{multirow}
-
 \usepackage{pgfplots}
-
 \pgfplotsset{compat=1.18}
-
 \usepackage{siunitx}
 
-%summary configuration
-\renewcommand{\cfttoctitlefont}{\hfill\Large\bfseries}
-\renewcommand{\cftaftertoctitle}{\hfill\mbox{}}
-\renewcommand{\cftsecleader}{\cftdotfill{\cftdotsep}}
+\usepackage[alf]{abntex2cite}
 
-%arial font
-\renewcommand{\familydefault}{\sfdefault}
+% fonte Times, também na matemática
+\usepackage{lmodern} % mono e sem serifa vetoriais
+\usepackage{mathptmx}
+\renewcommand{\ABNTEXchapterfont}{\rmfamily} % títulos também em Times
 
-\setlength{\parindent}{1.5cm}
+% informações do trabalho
+\titulo{Análise comparativa de desempenho entre CPU e GPU na solução de problemas de dinâmica dos fluidos computacional}
+\autor{João Pedro Vilela Fonseca}
+\local{Uberlândia -- MG}
+\data{2026}
+\orientador{Prof. Dr. João Rodrigo Andrade}
+\instituicao{%
+    Universidade Federal de Uberlândia
+    \par
+    Faculdade de Engenharia Mecânica}
+\tipotrabalho{Trabalho de Conclusão de Curso (Graduação)}
+\preambulo{Projeto de Conclusão de Curso apresentado ao Curso de Graduação em Engenharia Mecânica da Universidade Federal de Uberlândia, como requisito parcial para obtenção do título de Bacharel em Engenharia Mecânica.}
 
-\cftsetindents{section}{0em}{2.5em}
-\cftsetindents{subsection}{0em}{2.5em}
-\cftsetindents{subsubsection}{0em}{2.5em}
+% capa com o logotipo da instituição
+\renewcommand{\imprimircapa}{%
+    \begin{capa}%
+        \center
+        \includegraphics[width=2cm]{Ufu.jpg}
+
+        \vspace*{0.5cm}
+        {\ABNTEXchapterfont\large\imprimirinstituicao}
+
+        \vspace*{2cm}
+        {\ABNTEXchapterfont\large\imprimirautor}
+
+        \vfill
+        \begin{center}
+            \ABNTEXchapterfont\bfseries\LARGE\imprimirtitulo
+        \end{center}
+        \vfill
+
+        \large\imprimirlocal
+
+        \large\imprimirdata
+
+        \vspace*{1cm}
+    \end{capa}
+}
+
+% metadados do PDF
+\makeatletter
+\hypersetup{
+    pdftitle={\@title},
+    pdfauthor={\@author},
+    pdfsubject={\imprimirpreambulo},
+    pdfcreator={LaTeX with abnTeX2},
+    colorlinks=true,
+    linkcolor=black,
+    citecolor=black,
+    filecolor=black,
+    urlcolor=black,
+    bookmarksdepth=4
+}
+\makeatother
+
+\setlength{\parindent}{1.3cm}
+\setlength{\parskip}{0.2cm}
+
 
 \begin{document}
 
-\begin{titlepage}
-    \begin{center}
-        \textbf{João Pedro Vilela Fonseca\\}
-        \vspace*{\fill}
-        \textbf{\Large Desenvolvimento de aplicação web para problemas de transferência de calor\\}
-        \vspace*{\fill}
-        \begin{figure}[h]
-            \center
-            \includegraphics[width=2cm]{Ufu.jpg}
-        \end{figure}
-        UNIVERSIDADE FEDERAL DE UBERLÂNDIA\\
-        \vspace{0.3cm}
-        FACULDADE DE ENGENHARIA MECÂNICA\\
-        \vspace{0.3cm}
-        2024
-    \end{center}
-\end{titlepage}
+\selectlanguage{brazil}
+\frenchspacing
 
-\begin{titlepage}
-    \begin{center}
-        \textbf{\large João Pedro Vilela Fonseca\\}
-        \vspace*{\fill}
-        Orientador\\
-        \textbf{\large Prof. Dr. João Rodrigo Andrade\\}
-        \vspace*{\fill}
-        \textbf{\Large Desenvolvimento de aplicação web para problemas de transferência de calor\\}
-        \vspace*{\fill}
-        \begin{adjustwidth}{7cm}{0cm}
-            Projeto de Conclusão de Curso apresentado ao\\Curso de Graduação em Engenharia Mecânica,\\como requisito parcial para conclusão.
-        \end{adjustwidth}
-        \vspace*{\fill}
-        \textbf{UBERLÂNDIA - MG\\}
-        \textbf{2024}
-    \end{center}
-\end{titlepage}
+% ----------------------------------------------------------
+% Elementos pré-textuais
+% ----------------------------------------------------------
+\pretextual
 
-\begin{center}
-    \tableofcontents
-\end{center}
+\imprimircapa
+\imprimirfolhaderosto
 
-\newpage
+\begin{resumo}
+    Resumo a ser escrito ao final do trabalho.
 
-\section{INTRODUÇÃO}
+    \textbf{Palavras-chave}: dinâmica dos fluidos computacional. GPU. CUDA. computação paralela. volumes finitos.
+\end{resumo}
 
-Os estudantes de engenharia são submetidos no clico básico ao estudo de matemática e física, de forma que possam compreender melhor as manipulações algébricas e numéricas quando iniciam os estudos específicos de engenharia. A vertente de fenômenos de transporte é carregada de aplicações matemáticas que podem prejudicar o entendimento e visualização para os alunos menos familiarizados.
+\begin{resumo}[Abstract]
+    \begin{otherlanguage*}{english}
+        Abstract to be written at the end of the work.
 
-Ilustrações são recursos muito utilizados por educadores e autores de livros didáticos a fim de melhorar o entendimento dos estudantes. Entretanto as ilustrações são limitadas à mídia que pertencem (geralmente livros, revistas e artigos), não podendo ser interativas ou mutáveis.
+        \vspace{\onelineskip}
 
-Neste projeto foi desenvolvida uma aplicação web com interface interativa, onde os estudantes e professores podem manipular os parâmetros e visualizar explicações pontuais sobre as aplicações matemáticas e físicas que envolvem alguns problemas de transferência de calor.
+        \noindent
+        \textbf{Keywords}: computational fluid dynamics. GPU. CUDA. parallel computing. finite volume method.
+    \end{otherlanguage*}
+\end{resumo}
 
-\section{Relatório}
+\pdfbookmark[0]{\listfigurename}{lof}
+\listoffigures*
+\cleardoublepage
+
+\pdfbookmark[0]{\listtablename}{lot}
+\listoftables*
+\cleardoublepage
+
+\pdfbookmark[0]{\contentsname}{toc}
+\tableofcontents*
+\cleardoublepage
+
+% ----------------------------------------------------------
+% Elementos textuais
+% ----------------------------------------------------------
+\textual
+
+\chapter{Introdução}
+
+A dinâmica dos fluidos computacional (CFD, do inglês \emph{computational fluid dynamics}) consiste na solução numérica das equações que governam o escoamento de fluidos e a transferência de calor. Métodos como o de volumes finitos \cite{patankar1980,versteeg2007} transformam essas equações em grandes sistemas de equações algébricas, cuja solução exige um número de operações que cresce rapidamente com o refinamento da malha. Em problemas de interesse prático, o tempo de execução em processadores convencionais (CPUs) pode chegar a horas ou dias.
+
+Os processadores gráficos (GPUs), originalmente projetados para renderização, possuem milhares de núcleos capazes de executar a mesma operação sobre grandes volumes de dados em paralelo. Plataformas como o CUDA \cite{nvidia_cuda} permitem utilizar esse poder de processamento em aplicações de propósito geral, e as operações sobre vetores e matrizes típicas de CFD são candidatas naturais a esse tipo de paralelização.
+
+Entretanto, o ganho obtido depende fortemente da forma como o código é escrito. Bibliotecas de alto nível em Python, como NumPy \cite{harris2020} e CuPy \cite{okuta2017}, oferecem grande produtividade; compiladores \emph{just-in-time} como o Numba \cite{lam2015} aproximam o Python de linguagens compiladas; e implementações em C++, paralelizadas com OpenMP \cite{dagum1998} na CPU ou escritas diretamente em CUDA na GPU, oferecem maior controle ao custo de maior esforço de programação.
+
+\section{Objetivos}
+
+O objetivo geral deste trabalho é comparar o desempenho de CPUs e GPUs na solução de problemas de dinâmica dos fluidos computacional, considerando também o esforço de programação exigido por cada abordagem.
+
+Os objetivos específicos são:
+
+\begin{itemize}
+    \item implementar um mesmo problema de CFD, resolvido pelo método dos volumes finitos, em diferentes linguagens e bibliotecas: Python com NumPy e Numba na CPU, Python com CuPy e Numba na GPU, C++ serial e paralelizado com OpenMP na CPU e C++ com CUDA na GPU;
+    \item validar os resultados de cada implementação em relação ao código de referência em MATLAB;
+    \item medir e comparar os tempos de execução para diferentes níveis de refinamento de malha;
+    \item analisar as limitações de cada abordagem, como o consumo de memória da GPU.
+\end{itemize}
+
+\chapter{Relatório}
 
 O objetivo da primeira etapa é entender como os processadores gráficos (GPU) podem ser usados para solução de problemas de CFD (computation fluid dynamics) e qual a melhor abordagem, equilibrando o trabalho necessário para escrever o código e eficiência do mesmo. Nessa etapa serão feitas pesquisas e testes no sentido de entender como o código é feito quando se programa para GPU em Python e C++.
 
-É esperado que GPU's tenham melhor desempenho em operações envolvendo matrizes em comparação com processadores lógicos (CPU's). Dessa forma, considerando que boa parte dos problemas de CFD resultam em muitos cálculos envolvendo matrizes, é esperado que o uso de GPU possa acelerar as soluções, que em determinadas condições envolvem muitas horas se utilizando os métodos usuais, como por exemplo o MatLab.
+É esperado que GPUs tenham melhor desempenho em operações envolvendo matrizes em comparação com unidades centrais de processamento (CPUs). Dessa forma, considerando que boa parte dos problemas de CFD resultam em muitos cálculos envolvendo matrizes, é esperado que o uso de GPU possa acelerar as soluções, que em determinadas condições envolvem muitas horas se utilizando os métodos usuais, como por exemplo o MATLAB.
 
-\subsection{O hardware}
+\section{O hardware}
 
-O GPU utilizado é o modelo RTX 3070, da fabricante Nvidia, que através da plataforma CUDA (Compute Unified Device Architecture), possibilita a execução de códigos pelo método de computação paralela. Para este trabalho será usada a versão 12.7 do CUDA. Também é importante ressaltar que, conforme informações do fabricante, o chip RTX 3070 deve utilizar 8 gigabytes (Gb) de memória volátil.
+O GPU utilizado é o modelo RTX 3070, da fabricante Nvidia, que através da plataforma CUDA (Compute Unified Device Architecture), possibilita a execução de códigos pelo método de computação paralela. Para este trabalho será usada a versão 12.7 do CUDA. Também é importante ressaltar que, conforme informações do fabricante, o chip RTX 3070 deve utilizar 8 gigabytes (GB) de memória volátil.
 
-O restante do hardware é composto por um CPU modelo Ryzen 7 5700X de 8 núcleos físicos e 16 virtuais, operando em overclock a 4.75 Ghz e duas placas de memória volátil de 16 Gb operando a 3200 Mhz em dual channel.
+O restante do hardware é composto por um CPU modelo Ryzen 7 5700X de 8 núcleos físicos e 16 virtuais, operando em overclock a 4,75 GHz e duas placas de memória volátil de 16 GB operando a 3200 MHz em dual channel.
 
-Nesse trabalho será referido como RAM e VRAM as memórias voláteis dedicadas ao CPU e ao GPU, respectivamente. Uma parcela de 16 Gb da memória RAM também pode ser usada pelo GPU, sendo essa parcela referida como memória compartilhada.
+Nesse trabalho será referido como RAM e VRAM as memórias voláteis dedicadas ao CPU e ao GPU, respectivamente. Uma parcela de 16 GB da memória RAM também pode ser usada pelo GPU, sendo essa parcela referida como memória compartilhada.
 
-\subsection{Ambiente de execução}
+\section{Ambiente de execução}
 
 Neste trabalho o sistema operacional usado será o Ubuntu 24.04.2 através da virtualização \emph{Windows Subsystem for Linux} (WSL), sendo então o kernel base especificamente na versão \emph{5.15.167.4-microsoft-standard-WSL2}.
 
-Posteriormente, serão descritos todos os passos necessários para instalação dos drivers e programas para execução dos códigos em Pyhton e C++.
+Posteriormente, serão descritos todos os passos necessários para instalação dos drivers e programas para execução dos códigos em Python e C++.
 
-\subsection{O código}
+\section{O código}
 
-Foi usado como ponto de partida um código em MatLab (apêndice A), desenvolvido para fins didáticos, quem tem como objetivo calcular e exibir de forma gráfica a distribuição de calor em um fluido que atravessa um canal circular.
+Foi usado como ponto de partida um código em MATLAB (apêndice A), desenvolvido para fins didáticos, quem tem como objetivo calcular e exibir de forma gráfica a distribuição de calor em um fluido que atravessa um canal circular.
 
-\subsection{Python}
+\section{Python}
 
 O código foi traduzido para Python com o objetivo de utilizar os recursos da linguagem e bibliotecas desenvolvidas pela comunidade.
 
 O primeiro passo foi instalar o Python na versão mais recente 3.10.12, que será usada para todos os testes desse trabalho. Serão usadas as bibliotecas \emph{numpy} e \emph{cupy} para operações feitas no CPU e no GPU, respectivamente.
 
-\subsubsection{Instalação}
+\subsection{Instalação}
 
 O gerenciamento de pacotes de software e dependências nos sistemas de base Debian é feita nativamente através do \emph{Advanced Package Tool} (APT). Por se tratar de uma ferramenta nativa e altamente difundida pela comunidade, o APT será usado para gerenciar todos os pacotes nesse trabalho. Entretanto, qualquer outro gerenciador pode ser usado desde que respeitadas suas respectivas versões.
 
@@ -237,7 +304,7 @@ Por fim, o código a seguir pode ser usado para verificar se o cupy foi instalad
 Considerando que o código foi escrito em um arquivo \emph{test\_cupy.py} a execução é feita através do comando a seguir:
 
 \begin{minted}{bash}
-    python ./test_cupy.py
+    python ./teste_cupy.py
 \end{minted}
 
 Caso tudo esteja funcional, o output esperado se parece com o seguinte:
@@ -251,13 +318,13 @@ Caso tudo esteja funcional, o output esperado se parece com o seguinte:
 A máquina em questão possui apenas um adaptador gráfico, portanto o dispositivo é identificado na primeira posição (zero).
 
 
-\subsubsection{Tradução do código}
+\subsection{Tradução do código}
 
-A princípio, a tradução do código de MatLab para Python foi feita por um modelo de inteligência artificial, resultando em um código que funcionava parcialmente. Ao longo dos testes o código foi sendo modificado a fim de gerar resultados mais próximos aos do MatLab.
+A princípio, a tradução do código de MATLAB para Python foi feita por um modelo de inteligência artificial, resultando em um código que funcionava parcialmente. Ao longo dos testes o código foi sendo modificado a fim de gerar resultados mais próximos aos do MATLAB.
 
 Os código em Python que executa as operações usando CPU e GPU podem ser consultados nos apêndices B e C.
 
-\subsubsection{Testes iniciais}
+\subsection{Testes iniciais}
 
 No primeiro teste, com o número de volumes na direção y (nVolY) definido com 400, foi obtido um tempo de execução de 58,35 segundos usando CPU contra 5,72 segundos na GPU, evidenciando a agilidade extra do processador de vídeo em lidar com operações de matrizes.
 
@@ -271,8 +338,9 @@ Nas tabelas a seguir estão expostos os tempos totais (alocação + iteração) 
     \caption{Tempo de execução para cada valor de nVolY em CPU}
     \label{tab:cpu-times-table}
     \vspace{0.5cm}
-    \hspace{-2cm}\begin{tabular}{c|c|c|c|c|c|c|c}
-        \multirow{2}{*}{nVolY} & \multicolumn{5}{c}{Tempo de execução (s)} & \multirow{2}{*}{Média} & \multirow{2}{*}{Desvio padrão} \\
+    \centering\small\setlength{\tabcolsep}{4pt}
+    \begin{tabular}{c|c|c|c|c|c|c|c}
+        \multirow{2}{*}{nVolY} & \multicolumn{5}{c}{Tempo de execução (s)} & \multirow{2}{*}{Média} & \multirow{2}{*}{\shortstack{Desvio\\padrão}} \\
             & Teste 1    & Teste 2    & Teste 3    & Teste 4    & Teste 5    &            &          \\
         50  & 0,827760   & 0,328056   & 0,300077   & 0,290090   & 0,292328   & 0,407662   & 0,235329 \\
         100 & 2,523969   & 2,501784   & 2,707829   & 3,625440   & 2,731451   & 2,818095   & 0,463151 \\
@@ -287,14 +355,16 @@ Nas tabelas a seguir estão expostos os tempos totais (alocação + iteração) 
         550 & 102,563297 & 102,666959 & 108,051725 & 107,913193 & 106,444617 & 105,527958 & 2,732835 \\
         600 & 125,317569 & 125,022033 & 125,394101 & 123,311940 & 125,088841 & 124,826897 & 0,860852
     \end{tabular}
+    \fonte{Elaborado pelo autor.}
 \end{table}
 
 \begin{table}[]
     \caption{Tempo de execução para cada valor de nVolY em GPU}
     \label{tab:gpu-times-table}
     \vspace{0.5cm}
-    \hspace{-1.25cm}\begin{tabular}{c|c|c|c|c|c|c|c}
-        \multirow{2}{*}{nVolY} & \multicolumn{5}{c}{Tempo de execução (s)} & \multirow{2}{*}{Média} & \multirow{2}{*}{Desvio padrão} \\
+    \centering\small\setlength{\tabcolsep}{4pt}
+    \begin{tabular}{c|c|c|c|c|c|c|c}
+        \multirow{2}{*}{nVolY} & \multicolumn{5}{c}{Tempo de execução (s)} & \multirow{2}{*}{Média} & \multirow{2}{*}{\shortstack{Desvio\\padrão}} \\
             & Teste 1   & Teste 2   & Teste 3   & Teste 4   & Teste 5   &           &          \\
         50  & 0,490006  & 0,331601  & 0,491780  & 0,375072  & 0,199480  & 0,377588  & 0,121985 \\
         100 & 0,281556  & 0,280670  & 0,283004  & 0,350645  & 0,376177  & 0,314410  & 0,045641 \\
@@ -309,6 +379,7 @@ Nas tabelas a seguir estão expostos os tempos totais (alocação + iteração) 
         550 & 73,000980 & 75,620902 & 74,448216 & 75,327260 & 75,167063 & 74,712884 & 1,049869 \\
         600 & 96,896951 & 96,320385 & 95,345571 & 96,579065 & 96,495460 & 96,327486 & 0,587368
     \end{tabular}
+    \fonte{Elaborado pelo autor.}
 \end{table}
 
 \newpage
@@ -317,6 +388,8 @@ Usando os dados coletados foi possível construir o gráfico de comparação:
 
 \begin{figure}[!h]
     \centering
+    \caption{Comparação do tempo médio de execução entre CPU e GPU}
+    \label{fig:comparacao-cpu-gpu}
     \begin{tikzpicture}
         \begin{axis}[
             width=14cm,
@@ -378,54 +451,54 @@ Usando os dados coletados foi possível construir o gráfico de comparação:
 
         \end{axis}
     \end{tikzpicture}
-    \caption{Comparação do tempo médio de execução entre CPU e GPU}
-    \label{fig:comparacao-cpu-gpu}
+    \fonte{Elaborado pelo autor.}
 \end{figure}
 
-\subsubsection{Análise dos resultados}
+\subsection{Análise dos resultados}
 
-Nota-se através do gráfico que a GPU é mais rápida na execução das operações, entretanto fica claro que para valores do nVolY acima de 400 o tempo de execução aumenta mais do que o esperado. Isso acontece porque, o refinamento da malha aumenta o uso de memória volátil. Para valores acima de 400, a memória de 8 Gb dedicada à GPU não é suficiente para armazenar todas as matrizes e vetores usados nas operações, obrigando o sistema a usar a memória compartilhada, sendo essa parte da memória RAM do sistema.
+Nota-se através do gráfico que a GPU é mais rápida na execução das operações, entretanto fica claro que para valores do nVolY acima de 400 o tempo de execução aumenta mais do que o esperado. Isso acontece porque, o refinamento da malha aumenta o uso de memória volátil. Para valores acima de 400, a memória de 8 GB dedicada à GPU não é suficiente para armazenar todas as matrizes e vetores usados nas operações, obrigando o sistema a usar a memória compartilhada, sendo essa parte da memória RAM do sistema.
 
 O acesso do chip gráfico à memória compartilhada é feito através do barramento PCIe 4.0, que por sua vez é muito mais lento que o acesso direto através do memory bus (ou system bus), aumentando muito o tempo de execução quando é necessário o uso da memória compartilhada.
 
 Mesmo no cenário que foi descrito acima, a GPU ainda atingiu tempos de execução menores que a CPU para todos os valores de nVolY testados, mostrando que é conveniente o uso de GPU para operações com matrizes.
 
-\newpage
+% ----------------------------------------------------------
+% Elementos pós-textuais
+% ----------------------------------------------------------
+\postextual
 
-\appendix
+\bibliography{referencias}
 
-\section{Código em MatLab}
+\begin{apendicesenv}
+
+\partapendices
+\setminted{fontsize=\footnotesize}
+
+\chapter{Código em MATLAB}
 
 \inputminted{octave}{cfd_on_gpu/aula15_exercicio_VolumesFinitos_Poiseuille_Flow_2D.m}
 
-\newpage
-
-\section{Código para CPU}
+\chapter{Código para CPU}
 
 \inputminted{python}{cfd_on_gpu/aula15_exercicio_VolumesFinitos_Poiseuille_Flow_2D.py}
 
-\newpage
-
-\section{Código para GPU}
+\chapter{Código para GPU}
 
 \inputminted{python}{cfd_on_gpu/aula15_exercicio_VolumesFinitos_Poiseuille_Flow_2D_GPU.py}
 
-\newpage
-
-\section{Função que retorna o tempo de execução em CPU}
+\chapter{Função que retorna o tempo de execução em CPU}
 
 \inputminted{python}{cfd_on_gpu/compare/cpu.py}
 
-\newpage
-
-\section{Função que retorna o tempo de execução em GPU}
+\chapter{Função que retorna o tempo de execução em GPU}
 
 \inputminted{python}{cfd_on_gpu/compare/gpu.py}
 
-\newpage
-
-\section{Função de comparação dos tempos de execução}
+\chapter{Função de comparação dos tempos de execução}
 
 \inputminted{python}{cfd_on_gpu/compare/app.py}
+
+\end{apendicesenv}
+
 
 \end{document}

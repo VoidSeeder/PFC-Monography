@@ -8,3 +8,9 @@ _minted*
 python-env
 cpu_times_*.txt
 gpu_times_*.txt
+*.bbl
+*.blg
+*.fdb_latexmk
+*.fls
+*.lof
+*.lot
