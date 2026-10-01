@@ -66,6 +66,11 @@
     \end{capa}
 }
 
+% cabeçalho apenas com o número da página, sem título corrente nem fio
+\makeevenhead{abntheadings}{\ABNTEXfontereduzida\thepage}{}{}
+\makeoddhead{abntheadings}{}{}{\ABNTEXfontereduzida\thepage}
+\makeheadrule{abntheadings}{\textwidth}{0pt}
+
 % metadados do PDF
 \makeatletter
 \hypersetup{
@@ -82,8 +87,24 @@
 }
 \makeatother
 
+% espaçamento 1,5 equivalente ao do Word (20,7 pt para Times 12) em todo o
+% documento, inclusive onde a classe usaria espaço simples (referências,
+% tabelas, folha de rosto)
+\setSingleSpace{1.433}
+\SingleSpacing*
+
 \setlength{\parindent}{1.3cm}
-\setlength{\parskip}{0.2cm}
+\setlength{\parskip}{0pt} % sem espaço extra entre parágrafos
+\setlist{nosep}           % nem entre itens de listas
+
+% uma linha em branco antes e depois dos títulos
+\setlength{\afterchapskip}{\baselineskip}
+\setbeforesecskip{\baselineskip}
+\setaftersecskip{\baselineskip}
+\setbeforesubsecskip{\baselineskip}
+\setaftersubsecskip{\baselineskip}
+\setbeforesubsubsecskip{\baselineskip}
+\setaftersubsubsecskip{\baselineskip}
 
 
 \begin{document}
